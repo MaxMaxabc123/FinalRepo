@@ -4,6 +4,8 @@ import java.util.ArrayList;
 public class Vector 
 {
 	ArrayList<AlgebraicEquation> vectorAlgebraicEquation= new ArrayList<>();
+	protected double valueMultiplierOfVectorX=1.0;
+	protected double valueMultiplierOfVectorY=1.0;
 	public Vector(ArrayList<AlgebraicEquation> AlgebraicEquation)
 	{
 		vectorAlgebraicEquation=AlgebraicEquation;
@@ -51,20 +53,25 @@ public class Vector
 		{
 			return 0;
 		}
+		
 		else
 		{
-		sum+=vectorAlgebraicEquation.get(0).evaluate(time);
-		return sum;
+			sum+=vectorAlgebraicEquation.get(0).evaluate(time)*valueMultiplierOfVectorX;
+			return sum;
 		}
 	}
 	public double evaluateVectorY(double time)
 	{
+		double sum = 0;
 		if(vectorAlgebraicEquation.get(1)==null)
 		{
 			return 0;
 		}
-		double sum = 0;
-		sum+=vectorAlgebraicEquation.get(1).evaluate(time);
-		return sum;
+		
+		else
+		{
+			sum+=vectorAlgebraicEquation.get(1).evaluate(time)*valueMultiplierOfVectorY;
+			return sum;
+		}
 	}
 }

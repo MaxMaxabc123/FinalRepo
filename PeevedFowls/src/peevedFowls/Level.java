@@ -14,14 +14,15 @@ public class Level
 	{
 		int i;
 		physicsListLevel = new PhysicsObject[levelsBirdList.size()+levelsBlockList.size()];
-		for(i = 0; i < levelsBirdList.size();i++)
+		for(i = 0; i < levelsBlockList.size();i++)
 		{
-			physicsListLevel[i] = levelsBirdList.get(i);
+			physicsListLevel[i] = levelsBlockList.get(i);
 		}
-		for (int j = 0; j < levelsBlockList.size();j++)
+		for (int j = 0; j < levelsBirdList.size();j++)
 		{
-			physicsListLevel[j+i]=levelsBlockList.get(j);
+			physicsListLevel[j+i]=levelsBirdList.get(j);
 		}
+		
 	}
 	public void makeCoordinateLevelPlane()
 	{

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 public class AlgebraicEquation
 {
+	
 	private ArrayList<Variable> equationVariable= new ArrayList<>();
 	private double equationNumber=0;
+	protected boolean movingForeWard=true;
 	public AlgebraicEquation(ArrayList<Variable> variables,double number)
 	{
 		equationVariable=variables;
@@ -13,7 +15,7 @@ public class AlgebraicEquation
 	}
 	public double evaluate(double time)
 	{
-		int resultSum = 0;
+		double resultSum = 0;
 		for(int i = 0; i < equationVariable.size();i++)
 		{
 			resultSum+=equationVariable.get(i).evaluate(time);

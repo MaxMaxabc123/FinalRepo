@@ -16,12 +16,13 @@ import java.util.Scanner;
 
 public class MyPanel extends JPanel implements ActionListener
 {
-	final int PANEL_WIDTH = 800;
-	final int PANEL_HEIGHT = 800;
+	final int PANEL_WIDTH = GameMain.gameLevel.levelSizeX;
+	final int PANEL_HEIGHT = GameMain.gameLevel.levelSizeX;
 	Hashtable<PhysicsObject, Image> hashtable = new Hashtable<>();
 	Image pig;
 	Image bird;
 	Image block;
+	Image backGroundImage;
 	Timer timer;
 	JTextField textField;
 	JButton button;
@@ -29,21 +30,31 @@ public class MyPanel extends JPanel implements ActionListener
 	JSlider powerLevel;
 	int x = 0;
 	int y = 0;
-	double time=0;
+	static double time=0;
 	static double angle;
+	boolean buttonPushed=false;
 	MyPanel()
 	{
 		try
 		{
 			this.setBackground(Color.black);
 			this.setPreferredSize(new Dimension(PANEL_WIDTH,PANEL_HEIGHT));
-			
+			BufferedImage backGroundImageBuff = ImageIO.read(new File("ANGRYBIRDSBACKGROUDN.png"));
 			BufferedImage pigImg = ImageIO.read(new File("useThisPig.png"));
 			BufferedImage birdImg = ImageIO.read(new File("useThisRed.png"));
 			BufferedImage blockImg = ImageIO.read(new File("useThisBlock.png"));
+			timer = new Timer(33,this);
+			Toolkit.getDefaultToolkit().sync();
+			timer.start();
+			backGroundImage = backGroundImageBuff.getScaledInstance(PANEL_WIDTH, PANEL_HEIGHT, BufferedImage.SCALE_SMOOTH);
 			for(int i = 0; i < GameMain.gameLevel.physicsListLevel.length;i++)
 			{
-				if(GameMain.gameLevel.physicsListLevel[i] instanceof Pig)
+				if(GameMain.gameLevel.physicsListLevel[i] instanceof Fowl)
+				{
+					bird = birdImg.getScaledInstance(GameMain.gameLevel.physicsListLevel[i].objectSize, GameMain.gameLevel.physicsListLevel[i].objectSize,BufferedImage.SCALE_SMOOTH);
+					hashtable.put(GameMain.gameLevel.physicsListLevel[i],bird);
+				}
+				else if(GameMain.gameLevel.physicsListLevel[i] instanceof Pig)
 				{
 					pig = pigImg.getScaledInstance(GameMain.gameLevel.physicsListLevel[i].objectSize, GameMain.gameLevel.physicsListLevel[i].objectSize,BufferedImage.SCALE_SMOOTH);
 					hashtable.put(GameMain.gameLevel.physicsListLevel[i],pig);
@@ -53,16 +64,8 @@ public class MyPanel extends JPanel implements ActionListener
 					block = blockImg.getScaledInstance(GameMain.gameLevel.physicsListLevel[i].objectSize, GameMain.gameLevel.physicsListLevel[i].objectSize,BufferedImage.SCALE_SMOOTH);
 					hashtable.put(GameMain.gameLevel.physicsListLevel[i],block);
 				}
-				else if(GameMain.gameLevel.physicsListLevel[i] instanceof Fowl)
-				{
-					bird = birdImg.getScaledInstance(GameMain.gameLevel.physicsListLevel[i].objectSize, GameMain.gameLevel.physicsListLevel[i].objectSize,BufferedImage.SCALE_SMOOTH);
-					hashtable.put(GameMain.gameLevel.physicsListLevel[i],bird);
-				}
+				
 			}
-			timer = new Timer(1000,this);
-			Toolkit.getDefaultToolkit().sync();
-			repaint();
-			timer.start();
 			
 		}
 		catch(Exception e)
@@ -88,19 +91,22 @@ public class MyPanel extends JPanel implements ActionListener
 		this.add(button);
 		this.add(sliderOfAngle);
 		this.add(powerLevel);
+		
 	}
 	public void paint(Graphics g)
 	{
 		super.paint(g);
 		Graphics2D g2D=   (Graphics2D) g;
+		g2D.drawImage(backGroundImage,0,0,null);
 		Enumeration<PhysicsObject> physicsEnum = hashtable.keys();
 		Enumeration<Image> imageEnum = hashtable.elements();
-		
 		for(int i = 0; i < GameMain.gameLevel.physicsListLevel.length;i++)
 		{
 			Coordinate currentCoord = physicsEnum.nextElement().getCoordinate();
+			System.out.println();
 			x=currentCoord.getXCoord();
 			y=currentCoord.getYCoord();
+			
 			g2D.drawImage((Image)imageEnum.nextElement(),x,y,null);
 		}
 	}
@@ -109,7 +115,7 @@ public class MyPanel extends JPanel implements ActionListener
 	    public void stateChanged(ChangeEvent e) 
 	    {
 	        MyPanel.angle=sliderOfAngle.getValue();
-//	        System.out.println(MyPanel.angle);
+	        System.out.println(MyPanel.angle);
 //	        System.out.println(Math.cos(Math.toRadians(angle)));
 //	        System.out.println(powerLevel.getValue());
 	    }
@@ -125,35 +131,36 @@ public class MyPanel extends JPanel implements ActionListener
 			String vectorOfVelocity = "";
 			String vectorOfPosistion="";
 //			double number = Math.cos(Math.toRadians(angle))*powerLevel.getValue();
-			vectorOfPosistion+=(int)((5*Math.cos(Math.toRadians(angle)))*powerLevel.getValue());
+			vectorOfPosistion+=(int)((5*Math.cos(Math.toRadians(MyPanel.angle)))*powerLevel.getValue());
 			vectorOfPosistion+="t+";
-			vectorOfPosistion+=(int)((3*Math.cos(Math.toRadians(angle)))*powerLevel.getValue());
+			vectorOfPosistion+=(int)((3*Math.cos(Math.toRadians(MyPanel.angle)))*powerLevel.getValue());
 			vectorOfPosistion+=":";
 			vectorOfPosistion+="&";
-			vectorOfPosistion+=(int)((-5*Math.sin(Math.toRadians(angle)))*powerLevel.getValue());
+			vectorOfPosistion+=(int)((-5*Math.sin(Math.toRadians(MyPanel.angle)))*powerLevel.getValue());
 			vectorOfPosistion+="t+";
-			vectorOfPosistion+=(int)((-3*Math.sin(Math.toRadians(angle)))*powerLevel.getValue());
+			vectorOfPosistion+=(int)((-3*Math.sin(Math.toRadians(MyPanel.angle)))*powerLevel.getValue());
 			vectorOfPosistion+=":";
 			vectorOfVelocity+="0t+";
-			vectorOfVelocity+=(int)((5*Math.cos(Math.toRadians(angle)))*powerLevel.getValue());
+			vectorOfVelocity+=(int)((5*Math.cos(Math.toRadians(MyPanel.angle)))*powerLevel.getValue());
 			vectorOfVelocity+=":&";
 			vectorOfVelocity+="0t+";
-			vectorOfVelocity+=(int)((5*Math.sin(Math.toRadians(angle)))*powerLevel.getValue());
+			vectorOfVelocity+=(int)((5*Math.sin(Math.toRadians(MyPanel.angle)))*powerLevel.getValue());
 			vectorOfVelocity+=':';
-			System.out.println(vectorOfVelocity);
+			
 			if(vectorOfPosistion.length()==0)
 			{
 				
 			}
 			else
 			{
-				GameMain.gameLevel.physicsListLevel[0].getCollided(GameMain.generateVector(vectorOfPosistion),GameMain.generateVector(vectorOfVelocity));
+				GameMain.gameLevel.physicsListLevel[GameMain.gameLevel.physicsListLevel.length-1].getCollided(GameMain.generateVector(vectorOfPosistion),GameMain.generateVector(vectorOfVelocity));
+				System.out.println(GameMain.gameLevel.physicsListLevel[GameMain.gameLevel.physicsListLevel.length-1].objectPosistion);
 			}
-			
+			buttonPushed=true;
 		}
 		
 //		else if(GameMain.gameLevel.physicsListLevel[0].objectPosistion.evaluateVectorX(0)!=0||GameMain.gameLevel.physicsListLevel[0].objectPosistion.evaluateVectorY(0)!=0)
-		else if(true)
+		else if(buttonPushed)
 		{
 			GameMain.gameLevel.makeCoordinateLevelPlane();
 			for(int i = 0; i < GameMain.gameLevel.physicsListLevel.length;i++)
@@ -162,20 +169,78 @@ public class MyPanel extends JPanel implements ActionListener
 				{
 					for(int k = 0; k < GameMain.gameLevel.physicsListLevel[i].objectSize;k++)
 					{
-						if(GameMain.gameLevel.coordinateLevelPlane[GameMain.gameLevel.physicsListLevel[i].yCoordinate+j][GameMain.gameLevel.physicsListLevel[i].xCoordinate+k].occupyingPhysicsObject==null&&!GameMain.gameLevel.coordinateLevelPlane[GameMain.gameLevel.physicsListLevel[i].yCoordinate+j][GameMain.gameLevel.physicsListLevel[i].xCoordinate+k].accessed)
+
+						if((GameMain.gameLevel.physicsListLevel[i].xCoordinate+GameMain.gameLevel.physicsListLevel[i].objectSize>=GameMain.gameLevel.levelSizeX||GameMain.gameLevel.physicsListLevel[i].xCoordinate<=0)&&!GameMain.gameLevel.physicsListLevel[i].hitObjectXAxis)
+						{
+							System.out.println(GameMain.gameLevel.physicsListLevel[i]);
+							GameMain.gameLevel.physicsListLevel[i].newCollisionTime=time;
+							GameMain.gameLevel.physicsListLevel[i].changeBooleanTrue();
+							GameMain.gameLevel.physicsListLevel[i].hitObjectXAxis=true;
+							
+						}
+						else if((GameMain.gameLevel.physicsListLevel[i].yCoordinate+GameMain.gameLevel.physicsListLevel[i].objectSize>=GameMain.gameLevel.levelSizeY||GameMain.gameLevel.physicsListLevel[i].yCoordinate<=0)&&!GameMain.gameLevel.physicsListLevel[i].hitObjectYAxis)
+						{
+							System.out.println(GameMain.gameLevel.physicsListLevel[i]);
+							GameMain.gameLevel.physicsListLevel[i].newCollisionTime=time;
+							GameMain.gameLevel.physicsListLevel[i].changeBooleanTrue();
+							GameMain.gameLevel.physicsListLevel[i].hitObjectYAxis=true;
+						}
+						else if(GameMain.gameLevel.physicsListLevel[i].xCoordinate+GameMain.gameLevel.physicsListLevel[i].objectSize>=GameMain.gameLevel.levelSizeX||GameMain.gameLevel.physicsListLevel[i].xCoordinate<=0)
+						{
+							
+						}
+						else if(GameMain.gameLevel.physicsListLevel[i].yCoordinate+GameMain.gameLevel.physicsListLevel[i].objectSize>=GameMain.gameLevel.levelSizeY||GameMain.gameLevel.physicsListLevel[i].yCoordinate<=0)
+						{
+							
+						}
+						else if(GameMain.gameLevel.coordinateLevelPlane[GameMain.gameLevel.physicsListLevel[i].yCoordinate+j][GameMain.gameLevel.physicsListLevel[i].xCoordinate+k].occupyingPhysicsObject==null&&!GameMain.gameLevel.coordinateLevelPlane[GameMain.gameLevel.physicsListLevel[i].yCoordinate+j][GameMain.gameLevel.physicsListLevel[i].xCoordinate+k].accessed)
 						{
 							GameMain.gameLevel.coordinateLevelPlane[GameMain.gameLevel.physicsListLevel[i].yCoordinate+j][GameMain.gameLevel.physicsListLevel[i].xCoordinate+k].occupyingPhysicsObject=GameMain.gameLevel.physicsListLevel[i];
 							GameMain.gameLevel.coordinateLevelPlane[GameMain.gameLevel.physicsListLevel[i].yCoordinate+j][GameMain.gameLevel.physicsListLevel[i].xCoordinate+k].accessed=true;
-							
 						}
 						else
 						{
 							
+							GameMain.gameLevel.coordinateLevelPlane[GameMain.gameLevel.physicsListLevel[i].yCoordinate+j][GameMain.gameLevel.physicsListLevel[i].xCoordinate+k].occupyingPhysicsObject.improvedCollision(GameMain.gameLevel.physicsListLevel[i]);
+							return;
 						}
 					}
 				}
 			}
+//			PhysicsObject[] replacmentPhysicsList = new PhysicsObject[GameMain.gameLevel.physicsListLevel.length-1];
+//			int k = 0;
+//			for(int i = 0; i < GameMain.gameLevel.physicsListLevel.length;i++)
+//			{
+//				if(GameMain.gameLevel.physicsListLevel[i].slatedToBeDestroyed&&time-GameMain.gameLevel.physicsListLevel[i].newCollisionTime>=1.5)
+//				{
+//					PhysicsObject removedObject = GameMain.gameLevel.physicsListLevel[i];
+//					System.out.println(removedObject);
+//					for(int j = 0; j < GameMain.gameLevel.physicsListLevel.length;j++)
+//					{
+//						if(GameMain.gameLevel.physicsListLevel[j]==removedObject)
+//						{
+//							
+//						}
+//						else
+//						{
+//							replacmentPhysicsList[k]=GameMain.gameLevel.physicsListLevel[j];
+//							k++;
+//						}
+//					}
+//					GameMain.gameLevel.physicsListLevel=replacmentPhysicsList;
+//				}
+//			}
 			
+			for(int i = 0; i < GameMain.gameLevel.physicsListLevel.length;i++)
+			{
+				if(GameMain.gameLevel.physicsListLevel[i] instanceof Fowl)
+				{
+					GameMain.gameLevel.physicsListLevel[i].Move(time);
+				}
+			}
+			time+=.033;
+			repaint();
+		}
 //			for(int i = 0; i < GameMain.gameLevel.physicsListLevel.length;i++)
 //			{
 //					xCoordinate = GameMain.gameLevel.physicsListLevel[i].xCoordinate;
@@ -278,6 +343,6 @@ public class MyPanel extends JPanel implements ActionListener
 //			repaint();
 //		}
 //		
-		}
+		
 	}
 }

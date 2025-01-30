@@ -69,6 +69,8 @@ public class GameMain
 		int i = 0;
 		ArrayList<Integer> freeIntList = new ArrayList<Integer>();
 		int finalIntNum=0;
+		int finalVariableNumber=0;
+		Variable tempExpVariable=null;
 //		"-10t^2-10t+100+10t^2+10t-100:";
 		while (true)
 		{
@@ -80,6 +82,27 @@ public class GameMain
 				{
 					finalIntNum+=freeIntList.get(j);
 				}
+				for(int k = 0; k < arrayList.size();k++)
+				{
+					if(arrayList.get(k).algebraExponent==2)
+					{
+						tempExpVariable = arrayList.get(k);
+					}
+					else
+					{
+						finalVariableNumber+=(int) arrayList.get(k).algebraNumber;
+					}
+				}
+				arrayList.clear();
+				if(tempExpVariable==null)
+				{
+					
+				}
+				else
+				{
+					arrayList.add(tempExpVariable);
+				}
+				arrayList.add(new Variable('t',finalVariableNumber));
 				equation = new AlgebraicEquation(arrayList,finalIntNum);
 				return equation;
 			
@@ -187,7 +210,7 @@ public class GameMain
 						mass = numTemp;
 					}
 					break;
-					}
+				}
 				case ',':
 				{
 					i++;
@@ -255,7 +278,7 @@ public class GameMain
 		blankVelVector.add(generateAlgebraicEquation(gravityPosStringCompX));
 		for(int i = 0;i < gameLevel.physicsListLevel.length;i++)
 		{
-			if(gameLevel.physicsListLevel[i] instanceof Block&& !gameLevel.physicsListLevel[i].gotHit)
+			if(gameLevel.physicsListLevel[i] instanceof Block)
 			{
 				gameLevel.physicsListLevel[i].objectPosistion = new Vector(blankPosVector);
 				gameLevel.physicsListLevel[i].objectVelocity = new Vector(blankVelVector);
@@ -282,20 +305,15 @@ public class GameMain
 	{
 		String posistionY = "-200t^2-10t-100:";
 		String posistionX = "10t+10:";
+		String levelString = "(50,600,24,12)F+(10,10,14000000,12,123)B+(100,560,14000000,12,123)B+(112,560,14000000,12,123)B+(83,423,14000000,12,123)B:";
 //		String s = "(205,205,14000,13,123)B+(200,200,24,12)F+(300,300,31000,12,15)P:";
-		gameLevel = LevelBuilder("(20,20,24,12)F+(600,788,14000000,12,123)B+(600,776,14000000,12,123)B+(600,764,14000000,12,123)B:",800,800);
+		gameLevel = LevelBuilder("(50,750,24,12)F+(400,400,14000000,12,123)B+(100,400,14000000,12,123)B:",800,800);
 		System.setProperty("sun.java2d.opengl", "true");
 		GravityGenerator();
-//		Vector v = generateVector("10t+10:&10t^2+10t+100:");
-//		System.out.println(gameLevel.physicsListLevel[0].objectPosistion.getAt(0).toString());
-//		String inputEquation;
-//		Scanner posistionInput = new Scanner(System.in);
-//		inputEquation=posistionInput.nextLine();
-//		GameMain.gameLevel.physicsListLevel[0].objectPosistion=GameMain.generateVector(inputEquation);
-//		timer = new Timer();
+
+		
 		new MyFrame();
 		
-		System.out.println(gameLevel.coordinateLevelPlane[32][20].occupyingPhysicsObject);
 //		System.out.println(generateAlgebraicEquation(posistionY).evaluateAbsValue(2));
 //		
 //		

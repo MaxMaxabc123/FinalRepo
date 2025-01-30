@@ -3,11 +3,11 @@ package peevedFowls;
 public class Variable 
 {
 	// algebra has a char
-	private char algebraVariable;
+	protected char algebraVariable;
 	// algebra has a number
-	private double algebraNumber;
+	protected double algebraNumber;
 	// algebra has a exponent
-	private int algebraExponent;
+	protected int algebraExponent;
 	public Variable(char variable,double number)
 	{
 		algebraVariable=variable;
